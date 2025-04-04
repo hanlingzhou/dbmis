@@ -69,7 +69,7 @@ DBMIS（数据库管理信息系统）是一个专为数据管理和业务分析
 #### 1. 克隆项目
 
 ```bash
-git clone https://github.com/yourusername/dbmis.git
+git clone https://github.com/hanlingzhou/dbmis.git
 cd dbmis
 ```
 
@@ -203,4 +203,4 @@ dbmis/
 
 项目负责人 - your.email@example.com
 
-项目链接: [https://github.com/yourusername/dbmis](https://github.com/yourusername/dbmis) 
+项目链接: [https://github.com/hanlingzhou/dbmis](https://github.com/hanlingzhou/dbmis) 
