@@ -1,0 +1,72 @@
+-- 创建数据库
+CREATE DATABASE IF NOT EXISTS dbmis;
+USE dbmis;
+
+-- 用户表
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100),
+  role ENUM('admin', 'manager', 'user') NOT NULL DEFAULT 'user',
+  status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+  last_login DATETIME,
+  created_by INT,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_by INT,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- 地区表，存储江苏省13个设区市信息
+CREATE TABLE IF NOT EXISTS regions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE,
+  code VARCHAR(20),
+  status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 业务分类表
+CREATE TABLE IF NOT EXISTS business_categories (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 具体业务表
+CREATE TABLE IF NOT EXISTS business_services (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  category_id INT NOT NULL,
+  description TEXT,
+  status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (category_id) REFERENCES business_categories(id) ON DELETE RESTRICT
+);
+
+-- 业务数据表，存储各地区各业务的统计数据
+CREATE TABLE IF NOT EXISTS business_data (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  year INT NOT NULL,
+  month INT NOT NULL,
+  region_id INT NOT NULL,
+  service_id INT NOT NULL,
+  value DECIMAL(15,2) DEFAULT 0,
+  unit VARCHAR(20) DEFAULT '',
+  remark TEXT,
+  created_by INT,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_by INT,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (region_id) REFERENCES regions(id) ON DELETE RESTRICT,
+  FOREIGN KEY (service_id) REFERENCES business_services(id) ON DELETE RESTRICT,
+  UNIQUE KEY unique_data (year, month, region_id, service_id)
+); 
